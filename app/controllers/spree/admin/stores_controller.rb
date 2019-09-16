@@ -1,32 +1,25 @@
-module Spree
-  module Admin
-    module StoresControllerDecorator
-      def self.prepended(base)
-        base.before_action :load_payment_methods
-        base.before_action :load_shipping_methods
-      end
+class Spree::Admin::StoresController < Spree::Admin::ResourceController
 
-      def index
-        @stores = @stores.ransack({ name_or_domains_or_code_cont: params[:q] }).result if params[:q]
-        @stores = @stores.where(id: params[:ids].split(',')) if params[:ids]
+  before_action :load_payment_methods
+  before_action :load_shipping_methods
 
-        respond_with(@stores) do |format|
-          format.html
-          format.json
-        end
-      end
+  def index
+    @stores = @stores.ransack({ name_or_domains_or_code_cont: params[:q] }).result if params[:q]
+    @stores = @stores.where(id: params[:ids].split(',')) if params[:ids]
 
-      private
-
-      def load_payment_methods
-        @payment_methods = Spree::PaymentMethod.all
-      end
-
-      def load_shipping_methods
-        @shipping_methods = Spree::ShippingMethod.all
-      end
+    respond_with(@stores) do |format|
+      format.html
+      format.json
     end
   end
-end
 
-::Spree::Admin::StoresController.prepend ::Spree::Admin::StoresControllerDecorator
+  private
+
+  def load_payment_methods
+    @payment_methods = Spree::PaymentMethod.all
+  end
+
+  def load_shipping_methods
+    @shipping_methods = Spree::ShippingMethod.all
+  end
+end
