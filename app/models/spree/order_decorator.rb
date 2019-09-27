@@ -1,14 +1,8 @@
-module Spree
-  module OrderDecorator
-    def self.prepended(base)
-      base.belongs_to :store
-      base.scope :by_store, -> (store) { where(store_id: store) }
-    end
+Spree::Order.class_eval do
+  belongs_to :store
+  scope :by_store, -> (store) { where(store_id: store) }
 
-    def available_payment_methods
-      @available_payment_methods ||= Spree::PaymentMethod.available(:front_end, store)
-    end
+  def available_payment_methods
+    @available_payment_methods ||= Spree::PaymentMethod.available(:front_end, store)
   end
 end
-
-::Spree::Order.prepend ::Spree::OrderDecorator
